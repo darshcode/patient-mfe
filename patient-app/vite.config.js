@@ -21,7 +21,7 @@ export default defineConfig({
   preview: {
     host: "0.0.0.0",
     port: parseInt(process.env.PORT) || 3003,
-    allowedHosts: ["patient-app-xyz.onrender.com"], // Replace with actual Render subdomain
+    allowedHosts: ["patient-mfe.onrender.com"], // ✅ Replace with your actual Render subdomain
   },
   build: {
     target: "esnext",
