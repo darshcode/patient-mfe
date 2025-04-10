@@ -3,7 +3,6 @@ import MotivationCard from "./MotivationCard";
 import SendHelpAlert from "./SendHelpAlert";
 import SymptomForm from "./SymptomForm";
 
-// You would typically get this from context or props
 const patientId = localStorage.getItem("patientId");
 
 const PatientDashboard = () => {
