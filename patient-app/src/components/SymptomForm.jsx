@@ -60,6 +60,12 @@ const SymptomForm = ({ patientId }) => {
     }
   };
 
+  if (!patientId) {
+    return (
+      <p style={{ color: "red" }}>No patient ID found. Please log in again.</p>
+    );
+  }
+
   return (
     <div>
       <h2>Daily Symptom Checklist</h2>
