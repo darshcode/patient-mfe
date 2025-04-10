@@ -1,4 +1,3 @@
-// components/SendHelpAlert.jsx
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 
@@ -16,7 +15,7 @@ const SendHelpAlert = () => {
   const patientId = localStorage.getItem("patientId");
   const [message, setMessage] = useState("");
   const [sendAlert] = useMutation(SEND_HELP_ALERT);
-  const [sent, setSent] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,13 +29,12 @@ const SendHelpAlert = () => {
     });
 
     setMessage("");
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    setShowModal(true);
   };
 
   return (
-    <div className="card p-3 mb-4">
-      <h5>Request Help</h5>
+    <div className="card p-3 mb-4 shadow-sm">
+      <h5 className="card-title text-danger">Request Help</h5>
       <form onSubmit={handleSubmit}>
         <textarea
           className="form-control mb-2"
@@ -48,7 +46,45 @@ const SendHelpAlert = () => {
           Send Alert
         </button>
       </form>
-      {sent && <p className="text-success mt-2">Help alert sent!</p>}
+
+      {/* Modal for confirmation */}
+      {showModal && (
+        <>
+          <div
+            className="modal fade show"
+            style={{ display: "block" }}
+            tabIndex="-1"
+            role="dialog"
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Help Alert Sent</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowModal(false)}
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <p>Your request for help has been sent successfully.</p>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show"></div>
+        </>
+      )}
     </div>
   );
 };

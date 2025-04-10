@@ -16,7 +16,6 @@ const SUBMIT_SYMPTOMS = gql`
   }
 `;
 
-// Enum values from your schema
 const SYMPTOMS = [
   "fever",
   "cough",
@@ -30,6 +29,7 @@ const SYMPTOMS = [
 
 const SymptomForm = ({ patientId }) => {
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [submitSymptoms, { loading, error, data }] =
     useMutation(SUBMIT_SYMPTOMS);
 
@@ -54,7 +54,7 @@ const SymptomForm = ({ patientId }) => {
         },
       });
       setSelectedSymptoms([]);
-      alert("Symptoms submitted successfully!");
+      setShowModal(true);
     } catch (err) {
       console.error("Submission error:", err.message);
     }
@@ -62,36 +62,91 @@ const SymptomForm = ({ patientId }) => {
 
   if (!patientId) {
     return (
-      <p style={{ color: "red" }}>No patient ID found. Please log in again.</p>
+      <div className="alert alert-danger">
+        No patient ID found. Please log in again.
+      </div>
     );
   }
 
   return (
-    <div>
-      <h2>Daily Symptom Checklist</h2>
-      <form onSubmit={handleSubmit}>
-        {SYMPTOMS.map((symptom) => (
-          <div key={symptom}>
-            <label>
-              <input
-                type="checkbox"
-                value={symptom}
-                checked={selectedSymptoms.includes(symptom)}
-                onChange={handleChange}
-              />
-              {symptom.replace(/_/g, " ")}
-            </label>
+    <div className="container mt-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-primary mb-4">
+            Daily Symptom Checklist
+          </h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              {SYMPTOMS.map((symptom) => (
+                <div className="form-check" key={symptom}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value={symptom}
+                    id={symptom}
+                    checked={selectedSymptoms.includes(symptom)}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label" htmlFor={symptom}>
+                    {symptom.replace(/_/g, " ")}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit Symptoms"}
+            </button>
+          </form>
+
+          {error && (
+            <div className="alert alert-danger mt-3">
+              Error: {error.message}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bootstrap Modal */}
+      {showModal && data && (
+        <div
+          className="modal fade show"
+          style={{ display: "block" }}
+          tabIndex="-1"
+          role="dialog"
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Submission Successful</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>
+                  Symptoms submitted for{" "}
+                  <strong>{data.submitSymptoms.PatientID.name}</strong>!
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
-        ))}
-        <button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Submit Symptoms"}
-        </button>
-      </form>
-      {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
-      {data && (
-        <p style={{ color: "green" }}>
-          ✔ Submitted for: {data.submitSymptoms.PatientID.name}
-        </p>
+        </div>
       )}
     </div>
   );
