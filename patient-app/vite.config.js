@@ -12,6 +12,7 @@ export default defineConfig({
         "./PatientDashboard": "./src/components/PatientDashboard.jsx",
       },
       shared: ["react", "react-dom", "@apollo/client", "bootstrap"],
+      build: true,
     }),
   ],
   server: {
